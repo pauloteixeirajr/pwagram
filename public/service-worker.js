@@ -1,7 +1,10 @@
+const CACHE_STATIC = 'static-v2';
+const CACHE_DYNAMIC = 'dynamic-v2';
+
 self.addEventListener('install', function (event) {
   console.log('[Service worker] Install event...', event);
   event.waitUntil(
-    caches.open('static-v2').then(function (cache) {
+    caches.open(CACHE_STATIC).then(function (cache) {
       // Cache all url requests
       cache.addAll([
         '/',
@@ -26,7 +29,7 @@ self.addEventListener('activate', function (event) {
     caches.keys().then(function (keys) {
       return Promise.all(
         keys.map(function (key) {
-          if (key !== 'static-v2' && key !== 'dynamic') {
+          if (key !== CACHE_STATIC && key !== CACHE_DYNAMIC) {
             return caches.delete(key);
           }
         })
@@ -44,7 +47,7 @@ self.addEventListener('fetch', function (event) {
 
       return fetch(event.request)
         .then(function (res) {
-          return caches.open('dynamic').then(function (cache) {
+          return caches.open(CACHE_DYNAMIC).then(function (cache) {
             // res.clone() to avoid the Promise from being consumed before returning it
             cache.put(event.request.url, res.clone());
             return res;
