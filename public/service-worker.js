@@ -1,7 +1,7 @@
 self.addEventListener('install', function (event) {
   console.log('[Service worker] Install event...', event);
   event.waitUntil(
-    caches.open('static').then(function (cache) {
+    caches.open('static-v2').then(function (cache) {
       // Cache all url requests
       cache.addAll([
         '/',
@@ -22,6 +22,17 @@ self.addEventListener('install', function (event) {
 
 self.addEventListener('activate', function (event) {
   console.log('[Service worker] Activate event...', event);
+  event.waitUntil(
+    caches.keys().then(function (keys) {
+      return Promise.all(
+        keys.map(function (key) {
+          if (key !== 'static-v2' && key !== 'dynamic') {
+            return caches.delete(key);
+          }
+        })
+      );
+    })
+  );
   return self.clients.claim();
 });
 
