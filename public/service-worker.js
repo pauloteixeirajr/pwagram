@@ -31,13 +31,15 @@ self.addEventListener('fetch', function (event) {
       // Response will be null if cache is not available
       if (response) return response;
 
-      return fetch(event.request).then(function (res) {
-        return caches.open('dynamic').then(function (cache) {
-          // res.clone() to avoid the Promise from being consumed before returning it
-          cache.put(event.request.url, res.clone());
-          return res;
-        });
-      });
+      return fetch(event.request)
+        .then(function (res) {
+          return caches.open('dynamic').then(function (cache) {
+            // res.clone() to avoid the Promise from being consumed before returning it
+            cache.put(event.request.url, res.clone());
+            return res;
+          });
+        })
+        .catch(function (error) {});
     })
   );
 });
