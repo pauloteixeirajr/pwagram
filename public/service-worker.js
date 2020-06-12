@@ -9,6 +9,7 @@ self.addEventListener('install', function (event) {
       cache.addAll([
         '/',
         '/index.html',
+        '/offline.html',
         '/src/js/app.js',
         '/src/js/feed.js',
         '/src/js/material.min.js',
@@ -53,7 +54,11 @@ self.addEventListener('fetch', function (event) {
             return res;
           });
         })
-        .catch(function (error) {});
+        .catch(function (error) {
+          return caches.open(CACHE_STATIC).then(function (cache) {
+            return cache.match('/offline.html');
+          });
+        });
     })
   );
 });
