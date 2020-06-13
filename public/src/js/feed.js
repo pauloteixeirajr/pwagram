@@ -38,42 +38,48 @@ function clearCards() {
   }
 }
 
-function createCard() {
+function createCard(data) {
   let cardWrapper = document.createElement('div');
   cardWrapper.className = 'shared-moment-card mdl-card mdl-shadow--2dp';
   cardWrapper.style.marginLeft = '50%';
   cardWrapper.style.transform = 'translate(-50%, 0)';
   let cardTitle = document.createElement('div');
   cardTitle.className = 'mdl-card__title';
-  cardTitle.style.backgroundImage = 'url("/src/images/sf-boat.jpg")';
+  cardTitle.style.backgroundImage = 'url("' + data.image + '")';
   cardTitle.style.backgroundSize = 'cover';
   cardTitle.style.height = '180px';
   cardWrapper.appendChild(cardTitle);
   let cardTitleTextElement = document.createElement('h2');
   cardTitleTextElement.style.color = '#fff';
   cardTitleTextElement.className = 'mdl-card__title-text';
-  cardTitleTextElement.textContent = 'San Francisco Trip';
+  cardTitleTextElement.textContent = data.title;
   cardTitle.appendChild(cardTitleTextElement);
   let cardSupportingText = document.createElement('div');
   cardSupportingText.className = 'mdl-card__supporting-text';
-  cardSupportingText.textContent = 'In San Francisco';
+  cardSupportingText.textContent = data.location;
   cardSupportingText.style.textAlign = 'center';
   cardWrapper.appendChild(cardSupportingText);
   componentHandler.upgradeElement(cardWrapper);
   sharedMomentsArea.appendChild(cardWrapper);
 }
 
-let httpBin = 'https://httpbin.org/get';
-let netwWorkRecieved = false;
+function updateUi(data) {
+  for (let i = 0; i < data.length; i++) {
+    createCard(data[i]);
+  }
+}
+
+let httpBin = 'https://pwgram.firebaseio.com/posts.json';
+let networkRecieved = false;
 
 fetch(httpBin)
   .then(function (res) {
     return res.json();
   })
   .then(function (data) {
-    netwWorkRecieved = true;
+    networkRecieved = true;
     clearCards();
-    createCard();
+    updateUi(Object.values(data));
   });
 
 if ('caches' in window) {
@@ -85,8 +91,8 @@ if ('caches' in window) {
       }
     })
     .then(function (data) {
-      if (!netwWorkRecieved) {
-        createCard();
+      if (!networkRecieved && data) {
+        updateUi(Object.values(data));
       }
     });
 }

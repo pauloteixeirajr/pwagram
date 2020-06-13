@@ -60,7 +60,7 @@ self.addEventListener('activate', function (event) {
 });
 
 self.addEventListener('fetch', function (event) {
-  let httpBin = 'https://httpbin.org/get';
+  let httpBin = 'https://pwgram.firebaseio.com/posts.json';
   if (event.request.url.includes(httpBin)) {
     event.respondWith(
       caches.open(CACHE_DYNAMIC).then(function (cache) {
