@@ -78,7 +78,7 @@ self.addEventListener('fetch', function (event) {
           })
           .catch(function (error) {
             return caches.open(CACHE_STATIC).then(function (cache) {
-              if (event.request.url.includes('/help')) {
+              if (event.request.headers.get('accept').includes('text/html')) {
                 return cache.match('/offline.html');
               }
             });
