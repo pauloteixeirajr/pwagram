@@ -41,24 +41,36 @@ self.addEventListener('activate', function (event) {
 });
 
 self.addEventListener('fetch', function (event) {
-  event.respondWith(
-    caches.match(event.request).then(function (response) {
-      // Response will be null if cache is not available
-      if (response) return response;
-
-      return fetch(event.request)
-        .then(function (res) {
-          return caches.open(CACHE_DYNAMIC).then(function (cache) {
-            // res.clone() to avoid the Promise from being consumed before returning it
-            cache.put(event.request.url, res.clone());
-            return res;
-          });
-        })
-        .catch(function (error) {
-          return caches.open(CACHE_STATIC).then(function (cache) {
-            return cache.match('/offline.html');
-          });
+  let httpBin = 'https://httpbin.org/get';
+  if (event.request.url.includes(httpBin)) {
+    event.respondWith(
+      caches.open(CACHE_DYNAMIC).then(function (cache) {
+        return fetch(event.request).then(function (res) {
+          cache.put(event.request, res.clone());
+          return res;
         });
-    })
-  );
+      })
+    );
+  } else {
+    event.respondWith(
+      caches.match(event.request).then(function (response) {
+        // Response will be null if cache is not available
+        if (response) return response;
+
+        return fetch(event.request)
+          .then(function (res) {
+            return caches.open(CACHE_DYNAMIC).then(function (cache) {
+              // res.clone() to avoid the Promise from being consumed before returning it
+              cache.put(event.request.url, res.clone());
+              return res;
+            });
+          })
+          .catch(function (error) {
+            return caches.open(CACHE_STATIC).then(function (cache) {
+              return cache.match('/offline.html');
+            });
+          });
+      })
+    );
+  }
 });
