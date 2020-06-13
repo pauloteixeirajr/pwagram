@@ -9,6 +9,7 @@ function writeData(st, data) {
     const transaction = db.transaction(st, 'readwrite');
     const store = transaction.objectStore(st);
     store.put(data);
+    return transaction.complete;
   });
 }
 
@@ -17,5 +18,23 @@ function readAllData(st) {
     const transaction = db.transaction(st, 'readonly');
     const store = transaction.objectStore(st);
     return store.getAll();
+  });
+}
+
+function clearAllData(st) {
+  return dbPromise.then(function (db) {
+    const transaction = db.transaction(st, 'readwrite');
+    const store = transaction.objectStore(st);
+    store.clear();
+    return transaction.complete;
+  });
+}
+
+function deleteItemFromData(st, id) {
+  return dbPromise.then(function (db) {
+    const transaction = db.transaction(st, 'readwrite');
+    const store = transaction.objectStore(st);
+    store.delete(id);
+    return transaction.complete;
   });
 }
