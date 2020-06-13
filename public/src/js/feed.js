@@ -82,17 +82,10 @@ fetch(httpBin)
     updateUi(Object.values(data));
   });
 
-if ('caches' in window) {
-  caches
-    .match(httpBin)
-    .then(function (response) {
-      if (response) {
-        return response.json();
-      }
-    })
-    .then(function (data) {
-      if (!networkRecieved && data) {
-        updateUi(Object.values(data));
-      }
-    });
+if ('indexedDB' in window) {
+  readAllData('posts').then(function (posts) {
+    if (!networkRecieved) {
+      updateUi(posts);
+    }
+  });
 }

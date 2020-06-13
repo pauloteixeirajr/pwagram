@@ -1,4 +1,5 @@
 importScripts('/src/js/idb.js');
+importScripts('/src/js/utils.js');
 
 const CACHE_STATIC = 'static-v2';
 const CACHE_DYNAMIC = 'dynamic-v2';
@@ -66,12 +67,14 @@ self.addEventListener('fetch', function (event) {
   let httpBin = 'https://pwgram.firebaseio.com/posts.json';
   if (event.request.url.includes(httpBin)) {
     event.respondWith(
-      caches.open(CACHE_DYNAMIC).then(function (cache) {
-        return fetch(event.request).then(function (res) {
-          trimCache(CACHE_DYNAMIC, 10);
-          cache.put(event.request, res.clone());
-          return res;
+      fetch(event.request).then(function (res) {
+        const clonedRes = res.clone();
+        clonedRes.json().then(function (data) {
+          for (let key in data) {
+            writeData('posts', data[key]);
+          }
         });
+        return res;
       })
     );
   } else if (isInArray(event.request.url, STATIC_FILES)) {
