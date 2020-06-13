@@ -14,6 +14,15 @@ const STATIC_FILES = [
   'https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.indigo-pink.min.css',
 ];
 
+function isInArray(string, array) {
+  for (var i = 0; i < array.length; i++) {
+    if (array[i] === string) {
+      return true;
+    }
+  }
+  return false;
+}
+
 self.addEventListener('install', function (event) {
   console.log('[Service worker] Install event...', event);
   event.waitUntil(
@@ -51,12 +60,7 @@ self.addEventListener('fetch', function (event) {
         });
       })
     );
-  } else if (
-    new RegExp('\\b' + STATIC_FILES.join('\\b|\\b') + '\\b').test(
-      event.request.url
-    )
-  ) {
-    console.log(event.request.url);
+  } else if (isInArray(event.request.url, STATIC_FILES)) {
     event.respondWith(caches.match(event.request));
   } else {
     event.respondWith(
