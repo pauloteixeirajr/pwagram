@@ -7,6 +7,8 @@ const sharedMomentsArea = document.querySelector('#shared-moments');
 const form = document.querySelector('form');
 const titleInput = document.querySelector('#title');
 const locationInput = document.querySelector('#location');
+const firebase = 'https://pwgram.firebaseio.com/posts.json';
+let networkRecieved = false;
 
 function openCreatePostModal() {
   createPostArea.style.transform = 'translateY(0)';
@@ -34,6 +36,24 @@ function closeCreatePostModal() {
 shareImageButton.addEventListener('click', openCreatePostModal);
 
 closeCreatePostModalButton.addEventListener('click', closeCreatePostModal);
+
+function sendData() {
+  fetch(firebase, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+    body: JSON.stringify({
+      id: new Date().toISOString(),
+      title: titleInput.value.trim(),
+      location: locationInput.value.trim(),
+      image: '/src/images/sf-boat.jpg',
+    }),
+  }).then(function (res) {
+    console.log('Sent data', res);
+  });
+}
 
 form.addEventListener('submit', function (event) {
   event.preventDefault();
@@ -64,6 +84,8 @@ form.addEventListener('submit', function (event) {
         })
         .catch(console.log);
     });
+  } else {
+    sendData();
   }
 });
 
@@ -101,10 +123,7 @@ function updateUi(data) {
   }
 }
 
-let httpBin = 'https://pwgram.firebaseio.com/posts.json';
-let networkRecieved = false;
-
-fetch(httpBin)
+fetch(firebase)
   .then(function (res) {
     return res.json();
   })
