@@ -1,9 +1,12 @@
-let shareImageButton = document.querySelector('#share-image-button');
-let createPostArea = document.querySelector('#create-post');
-let closeCreatePostModalButton = document.querySelector(
+const shareImageButton = document.querySelector('#share-image-button');
+const createPostArea = document.querySelector('#create-post');
+const closeCreatePostModalButton = document.querySelector(
   '#close-create-post-modal-btn'
 );
-let sharedMomentsArea = document.querySelector('#shared-moments');
+const sharedMomentsArea = document.querySelector('#shared-moments');
+const form = document.querySelector('form');
+const titleInput = document.querySelector('#title');
+const locationInput = document.querySelector('#location');
 
 function openCreatePostModal() {
   createPostArea.style.transform = 'translateY(0)';
@@ -31,6 +34,38 @@ function closeCreatePostModal() {
 shareImageButton.addEventListener('click', openCreatePostModal);
 
 closeCreatePostModalButton.addEventListener('click', closeCreatePostModal);
+
+form.addEventListener('submit', function (event) {
+  event.preventDefault();
+
+  if (titleInput.value.trim() === '' || locationInput.value.trim() === '') {
+    alert('Please enter valid data');
+    return;
+  }
+
+  closeCreatePostModal();
+
+  if ('serviceWorker' in navigator && 'SyncManager' in window) {
+    navigator.serviceWorker.ready.then(function (sw) {
+      const post = {
+        id: new Date().toISOString(),
+        title: titleInput.value.trim(),
+        location: locationInput.value.trim(),
+      };
+      writeData('sync-posts', post)
+        .then(function () {
+          // Register sync task to SyncManager
+          return sw.sync.register('sync-new-post');
+        })
+        .then(function () {
+          const snackbar = document.getElementById('confirmation-toast');
+          const data = { message: 'Your post was saved for syncing' };
+          snackbar.MaterialSnackbar.showSnackbar(data);
+        })
+        .catch(console.log);
+    });
+  }
+});
 
 function clearCards() {
   while (sharedMomentsArea.hasChildNodes()) {
