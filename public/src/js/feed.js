@@ -71,6 +71,7 @@ form.addEventListener('submit', function (event) {
         id: new Date().toISOString(),
         title: titleInput.value.trim(),
         location: locationInput.value.trim(),
+        image: '/src/images/sf-boat.jpg',
       };
       writeData('sync-posts', post)
         .then(function () {

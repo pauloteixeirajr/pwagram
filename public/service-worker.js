@@ -17,6 +17,7 @@ const STATIC_FILES = [
   'https://fonts.googleapis.com/icon?family=Material+Icons',
   'https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.indigo-pink.min.css',
 ];
+const firebase = 'https://pwgram.firebaseio.com/posts.json';
 
 function isInArray(string, array) {
   for (var i = 0; i < array.length; i++) {
@@ -64,8 +65,7 @@ self.addEventListener('activate', function (event) {
 });
 
 self.addEventListener('fetch', function (event) {
-  let httpBin = 'https://pwgram.firebaseio.com/posts.json';
-  if (event.request.url.includes(httpBin)) {
+  if (event.request.url.includes(firebase)) {
     event.respondWith(
       fetch(event.request).then(function (res) {
         const clonedRes = res.clone();
@@ -105,6 +105,34 @@ self.addEventListener('fetch', function (event) {
               }
             });
           });
+      })
+    );
+  }
+});
+
+self.addEventListener('sync', function (event) {
+  if (event.tag === 'sync-new-post') {
+    event.waitUntil(
+      readAllData('sync-posts').then(function (data) {
+        for (const dt of data) {
+          fetch(firebase, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Accept: 'application/json',
+            },
+            body: JSON.stringify(dt),
+          })
+            .then(function (res) {
+              console.log('Sent data', res);
+              if (res.ok) {
+                deleteItemFromData('sync-posts', dt.id);
+              }
+            })
+            .catch(function (err) {
+              console.log(err);
+            });
+        }
       })
     );
   }
