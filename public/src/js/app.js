@@ -15,12 +15,19 @@ window.addEventListener('beforeinstallprompt', function (event) {
   return false;
 });
 
+function displayConfirmationNotification() {
+  new Notification('Notifications Enabled', {
+    body: 'You will get new notifications from PWAGgram',
+  });
+}
+
 function askForNotificationPermissions() {
   Notification.requestPermission().then(function (result) {
     if (result !== 'granted') {
       console.log('No notifications permissions granted!');
     } else {
       console.log('User granted permission');
+      displayConfirmationNotification();
     }
   });
 }
