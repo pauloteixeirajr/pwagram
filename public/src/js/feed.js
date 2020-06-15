@@ -7,7 +7,7 @@ const sharedMomentsArea = document.querySelector('#shared-moments');
 const form = document.querySelector('form');
 const titleInput = document.querySelector('#title');
 const locationInput = document.querySelector('#location');
-const firebase = 'https://pwgram.firebaseio.com/posts.json';
+const firebase = 'https://pwgram-b099b.firebaseio.com/posts.json';
 let networkRecieved = false;
 
 function openCreatePostModal() {

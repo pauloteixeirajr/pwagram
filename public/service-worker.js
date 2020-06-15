@@ -17,7 +17,7 @@ const STATIC_FILES = [
   'https://fonts.googleapis.com/icon?family=Material+Icons',
   'https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.indigo-pink.min.css',
 ];
-const firebase = 'https://pwgram.firebaseio.com/posts.json';
+const firebase = 'https://pwgram-b099b.firebaseio.com/posts.json';
 
 function isInArray(string, array) {
   for (var i = 0; i < array.length; i++) {
