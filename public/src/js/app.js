@@ -20,6 +20,12 @@ function displayConfirmationNotification() {
     navigator.serviceWorker.ready.then(function (swreg) {
       swreg.showNotification('Notifications Enabled', {
         body: 'You will get new notifications from PWAgram!',
+        icon: '/src/images/icons/app-icon-96x96.png',
+        image: '/src/images/sf-boat.jpg',
+        dir: 'ltr',
+        lang: 'en-US',
+        vibrate: [100, 50, 200], // vibration, pause, vibration in ms
+        badge: '/src/images/icons/app-icon-96x96.png',
       });
     });
   }
