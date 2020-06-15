@@ -18,6 +18,8 @@ const STATIC_FILES = [
   'https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.indigo-pink.min.css',
 ];
 const firebase = 'https://pwgram-b099b.firebaseio.com/posts.json';
+const firebaseApi =
+  'https://us-central1-pwgram-b099b.cloudfunctions.net/storePostData';
 
 function isInArray(string, array) {
   for (var i = 0; i < array.length; i++) {
@@ -115,7 +117,7 @@ self.addEventListener('sync', function (event) {
     event.waitUntil(
       readAllData('sync-posts').then(function (data) {
         for (const dt of data) {
-          fetch(firebase, {
+          fetch(firebaseApi, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -126,7 +128,9 @@ self.addEventListener('sync', function (event) {
             .then(function (res) {
               console.log('Sent data', res);
               if (res.ok) {
-                deleteItemFromData('sync-posts', dt.id);
+                res.json().then(function (resData) {
+                  deleteItemFromData('sync-posts', resData.id);
+                });
               }
             })
             .catch(function (err) {

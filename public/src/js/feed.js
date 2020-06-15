@@ -8,6 +8,8 @@ const form = document.querySelector('form');
 const titleInput = document.querySelector('#title');
 const locationInput = document.querySelector('#location');
 const firebase = 'https://pwgram-b099b.firebaseio.com/posts.json';
+const firebaseApi =
+  'https://us-central1-pwgram-b099b.cloudfunctions.net/storePostData';
 let networkRecieved = false;
 
 function openCreatePostModal() {
@@ -38,7 +40,7 @@ shareImageButton.addEventListener('click', openCreatePostModal);
 closeCreatePostModalButton.addEventListener('click', closeCreatePostModal);
 
 function sendData() {
-  fetch(firebase, {
+  fetch(firebaseApi, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

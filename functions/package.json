@@ -13,7 +13,8 @@
     "node": "8"
   },
   "dependencies": {
-    "firebase-admin": "^8.10.0",
+    "cors": "^2.8.5",
+    "firebase-admin": "^8.12.1",
     "firebase-functions": "^3.6.1"
   },
   "devDependencies": {
