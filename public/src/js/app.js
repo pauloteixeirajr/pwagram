@@ -16,9 +16,13 @@ window.addEventListener('beforeinstallprompt', function (event) {
 });
 
 function displayConfirmationNotification() {
-  new Notification('Notifications Enabled', {
-    body: 'You will get new notifications from PWAGgram',
-  });
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.ready.then(function (swreg) {
+      swreg.showNotification('Notifications Enabled', {
+        body: 'You will get new notifications from PWAgram!',
+      });
+    });
+  }
 }
 
 function askForNotificationPermissions() {
