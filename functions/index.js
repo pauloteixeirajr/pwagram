@@ -49,6 +49,7 @@ exports.storePostData = functions.https.onRequest((request, response) => {
                   JSON.stringify({
                     title: 'Your New Post',
                     content: 'New post added!',
+                    openUrl: '/help',
                   })
                 )
                 .catch(console.log);
