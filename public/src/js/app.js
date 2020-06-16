@@ -26,6 +26,8 @@ function displayConfirmationNotification() {
         lang: 'en-US',
         vibrate: [100, 50, 200], // vibration, pause, vibration in ms
         badge: '/src/images/icons/app-icon-96x96.png',
+        tag: 'confirm-notification',
+        renotify: true,
       });
     });
   }
