@@ -18,6 +18,7 @@ const canvasElement = document.querySelector('#canvas');
 const captureButton = document.querySelector('#capture-btn');
 const imagePicker = document.querySelector('#image-picker');
 const pickImageDiv = document.querySelector('#pick-image');
+let picture;
 
 function initializeMedia() {
   if (!('mediaDevices' in navigator)) {
@@ -65,6 +66,7 @@ captureButton.addEventListener('click', function (event) {
   videoPlayer.srcObject.getVideoTracks().forEach(function (track) {
     track.stop();
   });
+  picture = dataURItoBlob(canvasElement.toDataURL());
 });
 
 function openCreatePostModal() {
@@ -99,20 +101,18 @@ shareImageButton.addEventListener('click', openCreatePostModal);
 closeCreatePostModalButton.addEventListener('click', closeCreatePostModal);
 
 function sendData() {
+  const id = new Date().toISOString();
+  const postData = new FormData();
+  postData.append('id', id);
+  postData.append('title', titleInput.value.trim());
+  postData.append('location', locationInput.value.trim());
+  postData.append('file', picture, id + '.png');
   fetch(firebaseApi, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-    },
-    body: JSON.stringify({
-      id: new Date().toISOString(),
-      title: titleInput.value.trim(),
-      location: locationInput.value.trim(),
-      image: '/src/images/sf-boat.jpg',
-    }),
+    body: postData,
   }).then(function (res) {
     console.log('Sent data', res);
+    updateUi();
   });
 }
 
@@ -132,7 +132,7 @@ form.addEventListener('submit', function (event) {
         id: new Date().toISOString(),
         title: titleInput.value.trim(),
         location: locationInput.value.trim(),
-        image: '/src/images/sf-boat.jpg',
+        picture: picture,
       };
       writeData('sync-posts', post)
         .then(function () {

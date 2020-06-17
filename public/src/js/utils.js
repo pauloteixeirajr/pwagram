@@ -57,3 +57,16 @@ function urlBase64ToUint8Array(base64String) {
 
   return outputArray;
 }
+
+function dataURItoBlob(dataURI) {
+  const dataURIElements = dataURI.split(',');
+  const byteString = atob(dataURIElements[1]);
+  const mimeString = dataURIElements[0].split(':')[1].split(';')[0];
+  const arrayBuffer = new ArrayBuffer(byteString.length);
+  const uint8Array = new Uint8Array(arrayBuffer);
+  for (let i = 0; i < byteString.length; i++) {
+    uint8Array[i] = byteString.charCodeAt(i);
+  }
+
+  return new Blob([arrayBuffer], { type: mimeString });
+}

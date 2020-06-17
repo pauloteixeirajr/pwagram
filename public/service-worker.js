@@ -1,14 +1,15 @@
 importScripts('/src/js/idb.js');
 importScripts('/src/js/utils.js');
 
-const CACHE_STATIC = 'static-v2';
-const CACHE_DYNAMIC = 'dynamic-v2';
+const CACHE_STATIC = 'static-v3';
+const CACHE_DYNAMIC = 'dynamic-v3';
 const STATIC_FILES = [
   '/index.html',
   '/offline.html',
   '/src/js/idb.js',
   '/src/js/app.js',
   '/src/js/feed.js',
+  '/src/js/utils.js',
   '/src/js/material.min.js',
   '/src/css/app.css',
   '/src/css/feed.css',
@@ -117,13 +118,15 @@ self.addEventListener('sync', function (event) {
     event.waitUntil(
       readAllData('sync-posts').then(function (data) {
         for (const dt of data) {
+          const postData = new FormData();
+          postData.append('id', dt.id);
+          postData.append('title', dt.title);
+          postData.append('location', dt.location);
+          postData.append('file', dt.picture, dt.id + '.png');
+
           fetch(firebaseApi, {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Accept: 'application/json',
-            },
-            body: JSON.stringify(dt),
+            body: postData,
           })
             .then(function (res) {
               console.log('Sent data', res);
