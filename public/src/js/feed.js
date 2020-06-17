@@ -19,7 +19,25 @@ const captureButton = document.querySelector('#capture-btn');
 const imagePicker = document.querySelector('#image-picker');
 const pickImageDiv = document.querySelector('#pick-image');
 
-function initializeMedia() {}
+function initializeMedia() {
+  if (!('mediaDevices' in navigator)) {
+    navigator.mediaDevices = {};
+  }
+
+  if (!('getUserMedia' in navigator.mediaDevices)) {
+    navigator.mediaDevices.getUserMedia = function (constraints) {
+      const getUsermedia =
+        navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+      if (!getUsermedia) {
+        return Promise.reject(new Error('getUserMedia is not implemented'));
+      }
+
+      return new Promise(function (resolve, reject) {
+        getUsermedia.call(navigator, constraints, resolve, reject);
+      });
+    };
+  }
+}
 
 function openCreatePostModal() {
   createPostArea.style.transform = 'translateY(0)';
