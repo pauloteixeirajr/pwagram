@@ -12,8 +12,18 @@ const firebaseApi =
   'https://us-central1-pwgram-b099b.cloudfunctions.net/storePostData';
 let networkRecieved = false;
 
+// Camera Elements
+const videoPlayer = document.querySelector('#player');
+const canvasElement = document.querySelector('#canvas');
+const captureButton = document.querySelector('#capture-btn');
+const imagePicker = document.querySelector('#image-picker');
+const pickImageDiv = document.querySelector('#pick-image');
+
+function initializeMedia() {}
+
 function openCreatePostModal() {
   createPostArea.style.transform = 'translateY(0)';
+  initializeMedia();
   if (deferredPrompt) {
     deferredPrompt.prompt();
 
