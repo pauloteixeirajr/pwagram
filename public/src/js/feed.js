@@ -20,6 +20,51 @@ const imagePicker = document.querySelector('#image-picker');
 const pickImageDiv = document.querySelector('#pick-image');
 let picture;
 
+// Location elements
+const locationBtn = document.querySelector('#location-button');
+const locationLoader = document.querySelector('#location-loader');
+const manualLocationDiv = document.querySelector('#manual-location');
+let fetchedLocation;
+
+locationBtn.addEventListener('click', function (event) {
+  if (!('geolocation' in navigator)) return;
+
+  locationBtn.style.display = 'none';
+  locationLoader.style.display = 'block';
+  navigator.geolocation.getCurrentPosition(
+    function (position) {
+      console.log(position);
+      locationBtn.style.display = 'inline';
+      locationLoader.style.display = 'none';
+      fetchedLocation = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+      };
+      locationInput.value = 'In Dublin';
+      manualLocationDiv.classList.add('is-focused');
+    },
+    function (error) {
+      console.log(error);
+      locationBtn.style.display = 'inline';
+      locationLoader.style.display = 'none';
+      alert('Could not fetch location, please enter manually');
+      fetchedLocation = {
+        lat: null,
+        lng: null,
+      };
+    },
+    {
+      timeout: 7000,
+    }
+  );
+});
+
+function initializeLocation() {
+  if (!('geolocation' in navigator)) {
+    locationBtn.style.display = 'none';
+  }
+}
+
 function initializeMedia() {
   if (!('mediaDevices' in navigator)) {
     navigator.mediaDevices = {};
@@ -76,6 +121,7 @@ imagePicker.addEventListener('change', function (event) {
 function openCreatePostModal() {
   createPostArea.style.transform = 'translateY(0)';
   initializeMedia();
+  initializeLocation();
   if (deferredPrompt) {
     deferredPrompt.prompt();
 
@@ -98,6 +144,8 @@ function closeCreatePostModal() {
   pickImageDiv.style.display = 'none';
   videoPlayer.style.display = 'none';
   canvasElement.style.display = 'none';
+  locationBtn.style.display = 'inline';
+  locationLoader.style.display = 'none';
 }
 
 shareImageButton.addEventListener('click', openCreatePostModal);
@@ -110,6 +158,8 @@ function sendData() {
   postData.append('id', id);
   postData.append('title', titleInput.value.trim());
   postData.append('location', locationInput.value.trim());
+  postData.append('rawLocationLat', fetchedLocation.lat);
+  postData.append('rawLocationLng', fetchedLocation.lng);
   postData.append('file', picture, id + '.png');
   fetch(firebaseApi, {
     method: 'POST',
@@ -137,6 +187,7 @@ form.addEventListener('submit', function (event) {
         title: titleInput.value.trim(),
         location: locationInput.value.trim(),
         picture: picture,
+        rawLocation: fetchedLocation,
       };
       writeData('sync-posts', post)
         .then(function () {
