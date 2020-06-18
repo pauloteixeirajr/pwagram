@@ -24,7 +24,10 @@ let picture;
 const locationBtn = document.querySelector('#location-button');
 const locationLoader = document.querySelector('#location-loader');
 const manualLocationDiv = document.querySelector('#manual-location');
-let fetchedLocation;
+let fetchedLocation = {
+  lat: null,
+  lng: null,
+};
 
 locationBtn.addEventListener('click', function (event) {
   if (!('geolocation' in navigator)) return;
@@ -146,6 +149,7 @@ function closeCreatePostModal() {
   videoPlayer.style.display = 'none';
   canvasElement.style.display = 'none';
   locationBtn.style.display = 'inline';
+  captureButton.style.display = 'inline';
   locationLoader.style.display = 'none';
   if (videoPlayer.srcObject) {
     videoPlayer.srcObject.getVideoTracks().forEach(function (track) {
