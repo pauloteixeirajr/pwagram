@@ -17,6 +17,10 @@
   "author": "Maximilian Schwarzmüller",
   "license": "ISC",
   "devDependencies": {
-    "workbox-cli": "^6.4.2"
+    "workbox-cli": "^6.5.4",
+    "got": "^12.5.2"
+  },
+  "overrides": {
+    "got": "$got"
   }
 }
